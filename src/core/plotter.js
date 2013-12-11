@@ -438,11 +438,17 @@ function Plotter(nodesCtx, edgesCtx, labelsCtx, hoverCtx, graph, w, h) {
       ctx.fillStyle = self.p.labelColor == 'node' ?
                       (node['color'] || self.p.defaultNodeColor) :
                       self.p.defaultLabelColor;
-      ctx.fillText(
-        node['label'],
-        Math.round(node['displayX'] + node['displaySize'] * 1.5),
-        Math.round(node['displayY'] + fontSize / 2 - 3)
-      );
+
+      var lines = node['label'].split('\n');
+      for(var i = 0; i < lines.length; i++) {
+        var line_y = Math.round(node['displayY'] + fontSize / 2 - 3) +
+                               i * fontSize;
+        ctx.fillText(
+          lines[i],
+          Math.round(node['displayX'] + node['displaySize'] * 1.5),
+          line_y
+        );
+      }
     }
 
     return self;
