@@ -462,84 +462,86 @@ function Plotter(nodesCtx, edgesCtx, labelsCtx, hoverCtx, graph, w, h) {
   function drawHoverNode(node) {
     var ctx = hoverCtx;
 
-    var fontSize = self.p.labelSize == 'fixed' ?
-                   self.p.defaultLabelSize :
-                   self.p.labelSizeRatio * node['displaySize'];
+    if(node['forceHoverLabel']) {
+      var fontSize = self.p.labelSize == 'fixed' ?
+                     self.p.defaultLabelSize :
+                     self.p.labelSizeRatio * node['displaySize'];
 
-    ctx.font = (self.p.hoverFontStyle || self.p.fontStyle || '') + ' ' +
-               fontSize + 'px ' +
-               (self.p.hoverFont || self.p.font || '');
+      ctx.font = (self.p.hoverFontStyle || self.p.fontStyle || '') + ' ' +
+                 fontSize + 'px ' +
+                 (self.p.hoverFont || self.p.font || '');
 
-    ctx.fillStyle = self.p.labelHoverBGColor == 'node' ?
-                    (node['color'] || self.p.defaultNodeColor) :
-                    self.p.defaultHoverLabelBGColor;
+      ctx.fillStyle = self.p.labelHoverBGColor == 'node' ?
+                      (node['color'] || self.p.defaultNodeColor) :
+                      self.p.defaultHoverLabelBGColor;
 
-    // Label background:
-    ctx.beginPath();
+      // Label background:
+      ctx.beginPath();
 
-    if (self.p.labelHoverShadow) {
+      if (self.p.labelHoverShadow) {
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = self.p.labelHoverShadowColor;
+      }
+
+      sigma.tools.drawRoundRect(
+        ctx,
+        Math.round(node['displayX'] - fontSize / 2 - 2),
+        Math.round(node['displayY'] - fontSize / 2 - 2),
+        Math.round(ctx.measureText(node['label']).width +
+          node['displaySize'] * 1.5 +
+          fontSize / 2 + 4),
+        Math.round(fontSize + 4),
+        Math.round(fontSize / 2 + 2),
+        'left'
+      );
+      ctx.closePath();
+      ctx.fill();
+
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.shadowBlur = 4;
-      ctx.shadowColor = self.p.labelHoverShadowColor;
+      ctx.shadowBlur = 0;
+
+      // Node border:
+      ctx.beginPath();
+      ctx.fillStyle = self.p.nodeBorderColor == 'node' ?
+                      (node['color'] || self.p.defaultNodeColor) :
+                      self.p.defaultNodeBorderColor;
+      ctx.arc(Math.round(node['displayX']),
+              Math.round(node['displayY']),
+              node['displaySize'] + self.p.borderSize,
+              0,
+              Math.PI * 2,
+              true);
+      ctx.closePath();
+      ctx.fill();
+
+      // Node:
+      ctx.beginPath();
+      ctx.fillStyle = self.p.nodeHoverColor == 'node' ?
+                      (node['color'] || self.p.defaultNodeColor) :
+                      self.p.defaultNodeHoverColor;
+      ctx.arc(Math.round(node['displayX']),
+              Math.round(node['displayY']),
+              node['displaySize'],
+              0,
+              Math.PI * 2,
+              true);
+
+      ctx.closePath();
+      ctx.fill();
+
+      // Label:
+      ctx.fillStyle = self.p.labelHoverColor == 'node' ?
+                      (node['color'] || self.p.defaultNodeColor) :
+                      self.p.defaultLabelHoverColor;
+      ctx.fillText(
+        node['label'],
+        Math.round(node['displayX'] + node['displaySize'] * 1.5),
+        Math.round(node['displayY'] + fontSize / 2 - 3)
+      );
     }
-
-    sigma.tools.drawRoundRect(
-      ctx,
-      Math.round(node['displayX'] - fontSize / 2 - 2),
-      Math.round(node['displayY'] - fontSize / 2 - 2),
-      Math.round(ctx.measureText(node['label']).width +
-        node['displaySize'] * 1.5 +
-        fontSize / 2 + 4),
-      Math.round(fontSize + 4),
-      Math.round(fontSize / 2 + 2),
-      'left'
-    );
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = 0;
-
-    // Node border:
-    ctx.beginPath();
-    ctx.fillStyle = self.p.nodeBorderColor == 'node' ?
-                    (node['color'] || self.p.defaultNodeColor) :
-                    self.p.defaultNodeBorderColor;
-    ctx.arc(Math.round(node['displayX']),
-            Math.round(node['displayY']),
-            node['displaySize'] + self.p.borderSize,
-            0,
-            Math.PI * 2,
-            true);
-    ctx.closePath();
-    ctx.fill();
-
-    // Node:
-    ctx.beginPath();
-    ctx.fillStyle = self.p.nodeHoverColor == 'node' ?
-                    (node['color'] || self.p.defaultNodeColor) :
-                    self.p.defaultNodeHoverColor;
-    ctx.arc(Math.round(node['displayX']),
-            Math.round(node['displayY']),
-            node['displaySize'],
-            0,
-            Math.PI * 2,
-            true);
-
-    ctx.closePath();
-    ctx.fill();
-
-    // Label:
-    ctx.fillStyle = self.p.labelHoverColor == 'node' ?
-                    (node['color'] || self.p.defaultNodeColor) :
-                    self.p.defaultLabelHoverColor;
-    ctx.fillText(
-      node['label'],
-      Math.round(node['displayX'] + node['displaySize'] * 1.5),
-      Math.round(node['displayY'] + fontSize / 2 - 3)
-    );
 
     return self;
   };

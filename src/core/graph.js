@@ -71,6 +71,7 @@ function Graph() {
       'active': false,
       'hidden': false,
       'forceLabel': false,
+      'forceHoverLabel': true,
       // Strings :
       'label': id.toString(),
       'id': id.toString(),
@@ -91,6 +92,7 @@ function Graph() {
         case 'active':
         case 'hidden':
         case 'forceLabel':
+        case 'forceHoverLabel':
           n[k] = !!params[k];
           break;
         case 'color':
